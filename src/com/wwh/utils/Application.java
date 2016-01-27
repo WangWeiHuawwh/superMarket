@@ -4,6 +4,10 @@ public class Application {
 	public static String eid;
 
 	public static String getEid() {
+		if(eid==null)
+		{
+			eid="unkown";
+		}
 		return eid;
 	}
 

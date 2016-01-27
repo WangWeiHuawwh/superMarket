@@ -149,6 +149,8 @@ public class loginFrame {
 					if (size2.size() > 0) {
 						Application.setEid(size2.get(0).get(0).toString());
 						// 登录成功
+						// 登录成功
+						saleFrame.main(null);
 						frame.dispose();// 关闭本窗口
 					} else {
 						JOptionPane.showMessageDialog(null, "用户名密码错误");

@@ -14,6 +14,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import com.wwh.bean.PurchaseBean;
+import com.wwh.bean.StoreHouseBean;
+import com.wwh.bean.StoreHouseImpl;
 import com.wwh.utils.Application;
 import com.wwh.utils.DbManager;
 import com.wwh.utils.SQLiteCRUD;
@@ -43,10 +46,10 @@ public class buyFrame extends JFrame {
 	private JLabel lblVip;
 	private JTextField textField_4;
 	private JButton button;
-	private SQLiteCRUD sqlLite;
 	private JButton button_1;
 	private JLabel label_4;
 	private JTextField textField_7;
+	StoreHouseImpl storeHouseimpl;
 
 	/**
 	 * Launch the application.
@@ -68,7 +71,7 @@ public class buyFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public buyFrame() {
-		sqlLite = new SQLiteCRUD(new DbManager().getConnect());
+		storeHouseimpl = new StoreHouseImpl();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 802, 586);
 		contentPane = new JPanel();
@@ -167,30 +170,46 @@ public class buyFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
 				for (int i = 1; i < tableModel.getRowCount(); i++) {
-					Object[][] produce = sqlLite.selectObject("storehouse", "p_barcode",
-							tableModel.getValueAt(i, 0).toString().trim());
+					StoreHouseBean storehouseBean = storeHouseimpl
+							.findOne(tableModel.getValueAt(i, 0).toString().trim());
 					String[] value = new String[tableModel.getColumnCount()];
 					for (int j = 0; j < tableModel.getColumnCount(); j++) {
 						value[j] = tableModel.getValueAt(i, j).toString();
 					}
-					if (produce != null && produce.length > 0) {
-						int sum = Integer.parseInt(value[6]) + (int) produce[0][4];
-						sqlLite.executeSql(
-								"update storehouse set p_number=" + sum + " where p_barcode='" + value[0] + "';");
-
+					StoreHouseBean newStoreHouseBean = new StoreHouseBean();
+					newStoreHouseBean.setP_barcode(value[0]);
+					newStoreHouseBean.setP_name(value[1]);
+					newStoreHouseBean.setP_producer(value[2]);
+					newStoreHouseBean.setSale_price(Double.parseDouble(value[4]));
+					newStoreHouseBean.setP_number(Integer.parseInt(value[6]));
+					newStoreHouseBean.setP_text(value[7]);
+					newStoreHouseBean.setVip_price(Double.parseDouble(value[5]));
+					newStoreHouseBean.setIn_price(Double.parseDouble(value[3]));
+					if (storehouseBean != null
+							&& storehouseBean.p_barcode.equals(tableModel.getValueAt(i, 0).toString().trim())) {
+						newStoreHouseBean.setP_number(newStoreHouseBean.getP_number() + storehouseBean.getP_number());
+						storeHouseimpl.update(newStoreHouseBean);
 					} else {
-						sqlLite.executeSql("insert into storehouse values('" + value[0] + "','" + value[1] + "','"
-								+ value[2] + "','" + value[4] + "','" + value[6] + "','" + value[7] + "','" + value[5]
-								+ "','" + value[3] + "');");
+						storeHouseimpl.save(newStoreHouseBean);
 					}
-					Date date = new Date();
+					Date date = new Date(System.currentTimeMillis());
 					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// 可以方便地修改日期格式
+					PurchaseBean purchaseBean = new PurchaseBean();
+					purchaseBean.setBarcode(value[0]);
+					purchaseBean.setIn_price(Double.parseDouble(value[3]));
+					purchaseBean.setBuy_number(Integer.parseInt(value[6]));
+					purchaseBean.setBuy_date(dateFormat.format(date));
+					purchaseBean.setBuy_user(Application.getEid());
+					System.out.println(purchaseBean.toString());
 					// 插入进货记录
-//					sqlLite.executeSql(
-//							"insert into purchase(barcode,in_price,buy_number,buy_date,produce_time,buy_user,save_day) values('"
-//									+ value[0] + "' ,'" + value[3] + "','" + value[6] + "','" + dateFormat.format(date)
-//									+ "',0,'" + Application.getEid() + "','0');");
-					
+					// sqlLite.executeSql(
+					// "insert into
+					// purchase(barcode,in_price,buy_number,buy_date,produce_time,buy_user,save_day)
+					// values('"
+					// + value[0] + "' ,'" + value[3] + "','" + value[6] + "','"
+					// + dateFormat.format(date)
+					// + "',0,'" + Application.getEid() + "','0');");
+					storeHouseimpl.savePurchase(purchaseBean);
 
 				}
 				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
@@ -221,16 +240,19 @@ public class buyFrame extends JFrame {
 				if (code == KeyEvent.VK_ENTER) {
 					if (textField.getText().length() > 0) {
 						// 1.加载驱动
-						Object[][] produce = sqlLite.selectObject("storehouse", "p_barcode",
-								textField.getText().trim());
-						if (produce != null && produce.length > 0) {
-							textField_1.setText(produce[0][1].toString());
-							textField_2.setText(produce[0][2].toString());
-							textField_3.setText(produce[0][7].toString());
-							textField_4.setText(produce[0][6].toString());
-							textField_5.setText(produce[0][4].toString());
-							textField_6.setText(produce[0][5].toString());
-							textField_7.setText(produce[0][3].toString());
+						// Object[][] produce =
+						// sqlLite.selectObject("storehouse", "p_barcode",
+						// textField.getText().trim());
+						StoreHouseBean storehouseBean = storeHouseimpl.findOne(textField.getText().trim());
+						if (storehouseBean != null
+								&& storehouseBean.getP_barcode().equals(textField.getText().trim())) {
+							textField_1.setText(storehouseBean.getP_name());
+							textField_2.setText(storehouseBean.getP_producer());
+							textField_3.setText(storehouseBean.getIn_price().toString());
+							textField_4.setText(storehouseBean.getVip_price().toString());
+							textField_5.setText(storehouseBean.getP_number() + "");
+							textField_6.setText(storehouseBean.getP_text());
+							textField_7.setText(storehouseBean.getSale_price().toString());
 						} else {
 							textField_1.setText("");
 							textField_2.setText("");

@@ -31,13 +31,29 @@ public class StoreHouseImpl {
 		}
 	}
 
+	public void savePurchase(PurchaseBean purchaseBean) {
+		String ins_sql = "INSERT INTO purchase (barcode, in_price, buy_number,buy_date,produce_time,buy_user,save_day) VALUES (?,?,?,?,?,?,?)";
+		QueryRunner qr = new QueryRunner();
+		try {
+			qr.update(conn, ins_sql, purchaseBean.getBarcode(), purchaseBean.getIn_price(),
+					purchaseBean.getBuy_number(), purchaseBean.getBuy_date(), purchaseBean.getProduce_time(),
+					purchaseBean.getBuy_user(), purchaseBean.getSave_day());
+			// 获取新增记录的自增主键
+			// id = (Long) qr.query(conn, "SELECT LAST_INSERT_ID()", new
+			// ScalarHandler(1));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void update(StoreHouseBean storehouseBean) {
 		String ins_sql = "UPDATE storehouse SET p_name = ?, p_producer = ? , sale_price = ? , p_number = ? , p_text = ? , p_producer = ? , vip_price = ? , in_price = ? WHERE p_barcode = ?";
 		QueryRunner qr = new QueryRunner();
 		try {
 			qr.update(conn, ins_sql, storehouseBean.getP_name(), storehouseBean.getP_producer(),
 					storehouseBean.getSale_price(), storehouseBean.getP_number(), storehouseBean.getP_text(),
-					storehouseBean.getVip_price(), storehouseBean.getIn_price(), storehouseBean.getP_barcode());
+					storehouseBean.getP_producer(), storehouseBean.getVip_price(), storehouseBean.getIn_price(),
+					storehouseBean.getP_barcode());
 			// 获取新增记录的自增主键
 			// id = (Long) qr.query(conn, "SELECT LAST_INSERT_ID()", new
 			// ScalarHandler(1));
