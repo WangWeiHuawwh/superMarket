@@ -37,6 +37,7 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSpinner;
+import java.awt.Font;
 
 public class saleFrame extends JFrame {
 
@@ -50,6 +51,13 @@ public class saleFrame extends JFrame {
 	private JLabel vip_score_label;
 	private JLabel once_price_label;
 	private JSpinner spinner;
+	private JLabel sum_money;
+	private JTextField get_money;
+	private JLabel pay_back_label;
+	private JLabel label_2;
+	private JLabel label_3;
+	private JLabel label_4;
+	private JLabel name_label;
 
 	/**
 	 * Launch the application.
@@ -72,7 +80,7 @@ public class saleFrame extends JFrame {
 	 */
 	public saleFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 502);
+		setBounds(100, 100, 800, 717);
 		contentPane = new JPanel();
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -84,39 +92,41 @@ public class saleFrame extends JFrame {
 
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(Color.BLUE));
-		panel.setBounds(21, 86, 649, 368);
+		panel.setBounds(21, 86, 726, 563);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
 		JLabel lblNewLabel = new JLabel("\u5546\u54C1\u7F16\u53F7\uFF1A");
-		lblNewLabel.setBounds(10, 26, 72, 15);
+		lblNewLabel.setBounds(10, 61, 72, 15);
 		panel.add(lblNewLabel);
 
 		textField_1 = new JTextField();
-		textField_1.setBounds(79, 23, 114, 21);
+		textField_1.setBounds(82, 58, 114, 21);
 		panel.add(textField_1);
 		textField_1.setColumns(10);
 
 		JLabel label = new JLabel("\u8D2D\u4E70\u6570\u91CF\uFF1A");
-		label.setBounds(10, 74, 72, 15);
+		label.setBounds(10, 142, 72, 19);
 		panel.add(label);
 
 		JScrollPane scrollPane_data = new JScrollPane();
 		scrollPane_data.setPreferredSize(new Dimension(737, 251));
-		scrollPane_data.setBounds(226, 26, 378, 292);
+		scrollPane_data.setBounds(226, 26, 444, 382);
 		panel.add(scrollPane_data);
 
 		button_1 = new JButton("\u52A0\u5165\u8D2D\u7269\u8F66");
-		button_1.setBounds(79, 170, 123, 23);
+		button_1.setBounds(93, 266, 123, 23);
 		panel.add(button_1);
 
 		once_price_label = new JLabel("\u5546\u54C1\u4EF7\u683C");
-		once_price_label.setBounds(99, 124, 94, 15);
+		once_price_label.setBounds(93, 213, 94, 15);
 		panel.add(once_price_label);
 
-		JLabel label_2 = new JLabel("\u603B\u8BA1\uFF1A");
-		label_2.setBounds(424, 328, 54, 15);
-		panel.add(label_2);
+		sum_money = new JLabel("\u603B\u8BA1");
+		sum_money.setFont(new Font("宋体", Font.PLAIN, 20));
+		sum_money.setForeground(Color.RED);
+		sum_money.setBounds(406, 426, 112, 37);
+		panel.add(sum_money);
 		scrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
 			Object rowdata[][] = { { null, null, null, null, null, null, null } };
@@ -131,8 +141,64 @@ public class saleFrame extends JFrame {
 		}
 
 		spinner = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
-		spinner.setBounds(79, 71, 54, 22);
+		spinner.setBounds(82, 141, 54, 22);
 		panel.add(spinner);
+
+		JButton push_button = new JButton("\u8BA1\u7B97");
+		push_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+				Double sumMoney = 0d;
+				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+					//
+					if (isVip) {
+						sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 3).toString())
+								* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+					} else {
+						sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 2).toString())
+								* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+					}
+				}
+				sum_money.setText(sumMoney + "");
+			}
+		});
+		push_button.setBounds(226, 435, 93, 23);
+		panel.add(push_button);
+
+		JLabel label_1 = new JLabel("\u6536\u6B3E\uFF1A");
+		label_1.setBounds(528, 439, 36, 15);
+		panel.add(label_1);
+
+		get_money = new JTextField();
+		get_money.setBounds(574, 436, 96, 21);
+		panel.add(get_money);
+		get_money.setColumns(10);
+
+		pay_back_label = new JLabel("\u627E\u96F6");
+		pay_back_label.setFont(new Font("宋体", Font.PLAIN, 20));
+		pay_back_label.setForeground(Color.MAGENTA);
+		pay_back_label.setBounds(406, 480, 112, 37);
+		panel.add(pay_back_label);
+
+		JButton btnNewButton = new JButton("\u4ED8\u6B3E");
+		btnNewButton.setBounds(577, 530, 93, 23);
+		panel.add(btnNewButton);
+
+		label_2 = new JLabel("\u603B\u8BA1\uFF1A");
+		label_2.setBounds(342, 439, 54, 15);
+		panel.add(label_2);
+
+		label_3 = new JLabel("\u627E\u96F6\uFF1A");
+		label_3.setBounds(342, 490, 54, 15);
+		panel.add(label_3);
+
+		label_4 = new JLabel("\u5546\u54C1\u540D\u79F0\uFF1A");
+		label_4.setBounds(10, 103, 72, 21);
+		panel.add(label_4);
+
+		name_label = new JLabel("\u5546\u54C1\u540D\u79F0");
+		name_label.setBounds(82, 104, 114, 21);
+		panel.add(name_label);
 
 		final JPanel panel_vip = new JPanel();
 		panel_vip.setBorder(new LineBorder(Color.GREEN));
@@ -202,13 +268,26 @@ public class saleFrame extends JFrame {
 						if (storeHouseBean != null
 								&& storeHouseBean.getP_barcode().equals(textField_1.getText().trim())) {
 
-							once_price_label.setText("价格:"
-									+ storeHouseBean.getSale_price() * Integer.parseInt(spinner.getValue().toString()));
+							once_price_label.setText("单价:" + storeHouseBean.getSale_price());
+							name_label.setText(storeHouseBean.getP_name());
 						} else {
 							JOptionPane.showMessageDialog(null, "没有该商品信息");
 						}
 					} else {
 						JOptionPane.showMessageDialog(null, "信息填写不完全");
+					}
+				}
+			}
+
+		});
+		get_money.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				int code = e.getKeyCode();
+				if (code == KeyEvent.VK_ENTER) {
+					if (get_money.getText().length() > 0) {
+						Double backMoney = Double.parseDouble(get_money.getText())
+								- Double.parseDouble(sum_money.getText());
+						pay_back_label.setText(backMoney + "");
 					}
 				}
 			}
@@ -228,6 +307,7 @@ public class saleFrame extends JFrame {
 								Integer.parseInt(spinner.getValue().toString()), });
 						// 将文本框中的内容清空，以便下一次输入
 						textField_1.setText("");
+						spinner.setValue(1);
 
 					} else {
 						JOptionPane.showMessageDialog(null, "没有该商品信息");

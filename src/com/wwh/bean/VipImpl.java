@@ -26,4 +26,17 @@ public class VipImpl {
 		}
 		return null;
 	}
+
+	public void save(VipBean vipBean) {
+		String ins_sql = "INSERT INTO vip (name, score, phone,address) VALUES (?,?,?,?)";
+		QueryRunner qr = new QueryRunner();
+		try {
+			qr.update(conn, ins_sql, vipBean.getName(), vipBean.getScore(), vipBean.getPhone(), vipBean.getAddress());
+			// 获取新增记录的自增主键
+			// id = (Long) qr.query(conn, "SELECT LAST_INSERT_ID()", new
+			// ScalarHandler(1));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
