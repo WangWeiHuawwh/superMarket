@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -11,10 +13,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import com.wwh.bean.SalesBean;
+import com.wwh.bean.SalesImpl;
 import com.wwh.bean.StoreHouseBean;
 import com.wwh.bean.StoreHouseImpl;
 import com.wwh.bean.VipBean;
 import com.wwh.bean.VipImpl;
+import com.wwh.utils.Application;
 import com.wwh.utils.DbManager;
 import com.wwh.utils.SQLiteCRUD;
 
@@ -58,6 +63,11 @@ public class saleFrame extends JFrame {
 	private JLabel label_3;
 	private JLabel label_4;
 	private JLabel name_label;
+	private JButton btnNewButton;
+	private String vipPhone;
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// 可以方便地修改日期格式
+	private SalesImpl salesImpl;
+	private int score = 0;
 
 	/**
 	 * Launch the application.
@@ -79,6 +89,8 @@ public class saleFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public saleFrame() {
+		setTitle("\u9500\u552E");
+		salesImpl = new SalesImpl();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 717);
 		contentPane = new JPanel();
@@ -96,7 +108,7 @@ public class saleFrame extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("\u5546\u54C1\u7F16\u53F7\uFF1A");
+		JLabel lblNewLabel = new JLabel("*\u5546\u54C1\u7F16\u53F7\uFF1A");
 		lblNewLabel.setBounds(10, 61, 72, 15);
 		panel.add(lblNewLabel);
 
@@ -165,8 +177,8 @@ public class saleFrame extends JFrame {
 		push_button.setBounds(226, 435, 93, 23);
 		panel.add(push_button);
 
-		JLabel label_1 = new JLabel("\u6536\u6B3E\uFF1A");
-		label_1.setBounds(528, 439, 36, 15);
+		JLabel label_1 = new JLabel("*\u6536\u6B3E\uFF1A");
+		label_1.setBounds(515, 439, 49, 15);
 		panel.add(label_1);
 
 		get_money = new JTextField();
@@ -180,7 +192,8 @@ public class saleFrame extends JFrame {
 		pay_back_label.setBounds(406, 480, 112, 37);
 		panel.add(pay_back_label);
 
-		JButton btnNewButton = new JButton("\u4ED8\u6B3E");
+		btnNewButton = new JButton("\u4ED8\u6B3E");
+
 		btnNewButton.setBounds(577, 530, 93, 23);
 		panel.add(btnNewButton);
 
@@ -200,6 +213,18 @@ public class saleFrame extends JFrame {
 		name_label.setBounds(82, 104, 114, 21);
 		panel.add(name_label);
 
+		JButton clear_button = new JButton("clear");
+		clear_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+					tableModel.removeRow(i);
+				}
+			}
+		});
+		clear_button.setBounds(663, 0, 63, 23);
+		panel.add(clear_button);
+
 		final JPanel panel_vip = new JPanel();
 		panel_vip.setBorder(new LineBorder(Color.GREEN));
 		panel_vip.setBounds(94, 10, 391, 66);
@@ -207,20 +232,20 @@ public class saleFrame extends JFrame {
 		panel_vip.setLayout(null);
 		panel_vip.setVisible(false);
 		textField = new JTextField();
-		textField.setBounds(39, 20, 72, 21);
+		textField.setBounds(89, 20, 102, 21);
 		panel_vip.add(textField);
 		textField.setColumns(10);
 		button = new JButton("\u6821\u9A8C\u4F1A\u5458");
 
-		button.setBounds(134, 19, 93, 23);
+		button.setBounds(210, 19, 93, 23);
 		panel_vip.add(button);
 
-		JLabel lblId = new JLabel("Id\uFF1A");
-		lblId.setBounds(10, 23, 32, 15);
+		JLabel lblId = new JLabel("*phone\uFF1A");
+		lblId.setBounds(10, 23, 69, 15);
 		panel_vip.add(lblId);
 
 		vip_score_label = new JLabel("\u79EF\u5206\uFF1A0");
-		vip_score_label.setBounds(255, 23, 54, 15);
+		vip_score_label.setBounds(327, 23, 54, 15);
 		panel_vip.add(vip_score_label);
 		checkBox.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
@@ -245,7 +270,9 @@ public class saleFrame extends JFrame {
 						VipImpl vipImpl = new VipImpl();
 						VipBean vipBean = vipImpl.findOne(textField.getText().trim());
 						if (vipBean != null && vipBean.getPhone().equals(textField.getText().trim())) {
+							vipPhone = textField.getText().trim();
 							vip_score_label.setText("积分:" + vipBean.getScore());
+							score = vipBean.getScore();
 							isVip = true;
 						} else {
 							vip_score_label.setText("非会员");
@@ -299,7 +326,10 @@ public class saleFrame extends JFrame {
 					StoreHouseImpl storehouseImpl = new StoreHouseImpl();
 					StoreHouseBean storeHouseBean = storehouseImpl.findOne(textField_1.getText().trim());
 					if (storeHouseBean != null && storeHouseBean.getP_barcode().equals(textField_1.getText().trim())) {
-
+						if (storeHouseBean.getP_number() - Integer.parseInt(spinner.getValue().toString()) < 0) {
+							JOptionPane.showMessageDialog(null, "库存不足!");
+							return;
+						}
 						DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
 						// 添加下一行
 						tableModel.addRow(new Object[] { textField_1.getText(), storeHouseBean.getP_name(),
@@ -323,7 +353,9 @@ public class saleFrame extends JFrame {
 				VipImpl vipImpl = new VipImpl();
 				VipBean vipBean = vipImpl.findOne(textField.getText().trim());
 				if (vipBean != null && vipBean.getPhone().equals(textField.getText().trim())) {
+					vipPhone = textField.getText().trim();
 					vip_score_label.setText("积分:" + vipBean.getScore());
+					score = vipBean.getScore();
 					isVip = true;
 				} else {
 					vip_score_label.setText("非会员");
@@ -331,6 +363,92 @@ public class saleFrame extends JFrame {
 				}
 			}
 		});
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (get_money.getText().length() > 0) {
+
+					double sumMoney = 0d;
+					DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+					for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+						StoreHouseImpl storeHouseimpl = new StoreHouseImpl();
+						StoreHouseBean storeHouseBean = storeHouseimpl.findOne(tableModel.getValueAt(i, 0).toString());
+						// 更新库存量
+						if (storeHouseBean.getP_number()
+								- Integer.parseInt(tableModel.getValueAt(i, 4).toString()) < 0) {
+							// JOptionPane.showMessageDialog(null,
+							// "这个货余量不足");
+							continue;
+						} else {
+							storeHouseBean.setP_number(storeHouseBean.getP_number()
+									- Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+							storeHouseimpl.update(storeHouseBean);
+						}
+						Double moeny = 0d;
+						SalesBean salesBean = new SalesBean();
+						//
+						if (isVip) {
+							// 计算总价
+							sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 3).toString())
+									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+							// 更新售货表
+							Date date = new Date(System.currentTimeMillis());
+							moeny = Double.parseDouble(tableModel.getValueAt(i, 3).toString())
+									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+							salesBean.setBarcode(tableModel.getValueAt(i, 0).toString());
+							salesBean.setPrice(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
+							salesBean.setDate(dateFormat.format(date));
+							salesBean.setVip(vipPhone);
+							salesBean.setReal_price(Double.parseDouble(tableModel.getValueAt(i, 3).toString()));
+							salesBean.setNumber(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+							salesBean.setSummoney(moeny);
+							salesBean.setUser(Application.getEid());
+							salesImpl.insert(salesBean);
+
+						} else {
+							sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 2).toString())
+									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+							Date date = new Date(System.currentTimeMillis());
+							moeny = Double.parseDouble(tableModel.getValueAt(i, 2).toString())
+									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+							salesBean.setBarcode(tableModel.getValueAt(i, 0).toString());
+							salesBean.setPrice(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
+							salesBean.setDate(dateFormat.format(date));
+							salesBean.setVip("null");
+							salesBean.setReal_price(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
+							salesBean.setNumber(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+							salesBean.setSummoney(moeny);
+							salesBean.setUser(Application.getEid());
+							salesImpl.insert(salesBean);
+						}
+
+					}
+					Double backMoney = Double.parseDouble(get_money.getText()) - sumMoney;
+					if (isVip) {
+						VipImpl vipimpl = new VipImpl();
+						VipBean vipBean = new VipBean();
+						vipBean.setScore(score + (int) sumMoney);
+						vipBean.setPhone(vipPhone);
+						vipimpl.update(vipBean);
+					}
+
+					JOptionPane.showMessageDialog(null, "成功!找零:" + backMoney);
+					clearAll();
+				} else {
+					JOptionPane.showMessageDialog(null, "填写收款");
+				}
+			}
+		});
+	}
+
+	protected void clearAll() {
+		// TODO Auto-generated method stub
+		DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+		for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+			tableModel.removeRow(i);
+		}
+		sum_money.setText(0 + "");
+		pay_back_label.setText(0 + "");
+		get_money.setText("");
 	}
 
 	protected boolean isFull() {

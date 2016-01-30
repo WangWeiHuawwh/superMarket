@@ -2,9 +2,11 @@ package com.wwh.bean;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import com.wwh.utils.DbManager;
@@ -68,6 +70,30 @@ public class StoreHouseImpl {
 			StoreHouseBean storeHouse = (StoreHouseBean) qr.query(conn, "SELECT * FROM storehouse where p_barcode = ?",
 					new BeanHandler(StoreHouseBean.class), b_code);
 			return storeHouse;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public StoreHouseBean findByName(String name) {
+		QueryRunner qr = new QueryRunner();
+		try {
+			StoreHouseBean storeHouse = (StoreHouseBean) qr.query(conn, "SELECT * FROM storehouse where name = ?",
+					new BeanHandler(StoreHouseBean.class), name);
+			return storeHouse;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public List<StoreHouseBean> getLeft(int number) {
+		QueryRunner qr = new QueryRunner();
+		try {
+			List<StoreHouseBean> pset = (List) qr.query(conn, "SELECT * FROM storehouse where p_number<?",
+					new BeanListHandler(StoreHouseBean.class), number);
+			return pset;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

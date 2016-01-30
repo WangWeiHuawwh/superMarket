@@ -46,6 +46,7 @@ public class vipFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public vipFrame() {
+		setTitle("\u4F1A\u5458");
 		vipImpl = new VipImpl();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 580, 461);
@@ -63,7 +64,7 @@ public class vipFrame extends JFrame {
 		contentPane.add(text_name);
 		text_name.setColumns(10);
 
-		JLabel lblNewLabel = new JLabel("\u7535\u8BDD\uFF1A");
+		JLabel lblNewLabel = new JLabel("*\u7535\u8BDD\uFF1A");
 		lblNewLabel.setBounds(29, 75, 54, 15);
 		contentPane.add(lblNewLabel);
 
@@ -105,6 +106,7 @@ public class vipFrame extends JFrame {
 						vipBeanNew.setScore(Integer.parseInt(text_score.getText().trim()));
 						vipImpl.save(vipBeanNew);
 						JOptionPane.showMessageDialog(null, "×¢²á³É¹¦");
+						clear();
 
 					}
 				}
@@ -134,6 +136,14 @@ public class vipFrame extends JFrame {
 		});
 		button.setBounds(223, 71, 93, 23);
 		contentPane.add(button);
+	}
+
+	protected void clear() {
+		// TODO Auto-generated method stub
+		text_phone.setText("");
+		text_name.setText("");
+		text_add.setText("");
+		text_score.setText("");
 	}
 
 	public boolean isFull() {

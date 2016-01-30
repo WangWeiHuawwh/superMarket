@@ -83,4 +83,11 @@ public class SalesBean {
 		this.summoney = summoney;
 	}
 
+	@Override
+	public String toString() {
+		return "SalesBean [id=" + id + ", barcode=" + barcode + ", number=" + number + ", price=" + price
+				+ ", real_price=" + real_price + ", date=" + date + ", user=" + user + ", vip=" + vip + ", summoney="
+				+ summoney + "]";
+	}
+
 }

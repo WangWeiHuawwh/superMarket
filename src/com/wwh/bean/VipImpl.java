@@ -39,4 +39,15 @@ public class VipImpl {
 			e.printStackTrace();
 		}
 	}
+
+	public void update(VipBean vipBean) {
+		String ins_sql = "UPDATE vip SET score = ? WHERE phone = ?";
+		QueryRunner qr = new QueryRunner();
+		try {
+			qr.update(conn, ins_sql, vipBean.getScore(), vipBean.getPhone());
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -57,6 +57,7 @@ public class loginFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setTitle("\u767B\u5F55");
 		frame.setBounds(100, 100, 495, 343);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);

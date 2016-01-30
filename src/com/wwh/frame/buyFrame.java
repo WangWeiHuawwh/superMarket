@@ -71,6 +71,7 @@ public class buyFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public buyFrame() {
+		setTitle("\u8FDB\u8D27");
 		storeHouseimpl = new StoreHouseImpl();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 802, 586);
@@ -79,7 +80,7 @@ public class buyFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JLabel label = new JLabel("\u4EA7\u54C1\u7F16\u53F7\uFF1A");
+		JLabel label = new JLabel("*\u4EA7\u54C1\u7F16\u53F7\uFF1A");
 		label.setBounds(47, 52, 80, 15);
 		contentPane.add(label);
 
