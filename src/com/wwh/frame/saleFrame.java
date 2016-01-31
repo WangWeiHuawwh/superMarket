@@ -1,6 +1,7 @@
 package com.wwh.frame;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -68,6 +69,7 @@ public class saleFrame extends JFrame {
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// 可以方便地修改日期格式
 	private SalesImpl salesImpl;
 	private int score = 0;
+	final JCheckBox checkBox;
 
 	/**
 	 * Launch the application.
@@ -97,7 +99,7 @@ public class saleFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		final JCheckBox checkBox = new JCheckBox("\u4F1A\u5458");
+		checkBox = new JCheckBox("\u4F1A\u5458");
 
 		checkBox.setBounds(21, 31, 67, 23);
 		contentPane.add(checkBox);
@@ -277,6 +279,7 @@ public class saleFrame extends JFrame {
 						} else {
 							vip_score_label.setText("非会员");
 							isVip = false;
+							score = 0;
 						}
 
 					}
@@ -449,6 +452,7 @@ public class saleFrame extends JFrame {
 		sum_money.setText(0 + "");
 		pay_back_label.setText(0 + "");
 		get_money.setText("");
+		checkBox.setSelected(false);
 	}
 
 	protected boolean isFull() {

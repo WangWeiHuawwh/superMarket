@@ -163,6 +163,7 @@ public class loginFrame {
 					if (size3.size() > 0) {
 						Application.setEid(size3.get(0).get(0).toString());
 						// 登录成功
+						adminFrame.main(null);
 						frame.dispose();// 关闭本窗口
 					} else {
 						JOptionPane.showMessageDialog(null, "用户名密码错误");
