@@ -19,12 +19,13 @@ public class StoreHouseImpl {
 	}
 
 	public void save(StoreHouseBean storehouseBean) {
-		String ins_sql = "INSERT INTO storehouse (p_barcode, p_name, p_producer,sale_price,p_number,p_text,vip_price,in_price) VALUES (?,?,?,?,?,?,?,?)";
+		String ins_sql = "INSERT INTO storehouse (p_barcode, p_name, p_producer,sale_price,p_number,p_text,vip_price,in_price,image) VALUES (?,?,?,?,?,?,?,?,?)";
 		QueryRunner qr = new QueryRunner();
 		try {
 			qr.update(conn, ins_sql, storehouseBean.getP_barcode(), storehouseBean.getP_name(),
 					storehouseBean.getP_producer(), storehouseBean.getSale_price(), storehouseBean.getP_number(),
-					storehouseBean.getP_text(), storehouseBean.getVip_price(), storehouseBean.getIn_price());
+					storehouseBean.getP_text(), storehouseBean.getVip_price(), storehouseBean.getIn_price(),
+					storehouseBean.getImage());
 			// 获取新增记录的自增主键
 			// id = (Long) qr.query(conn, "SELECT LAST_INSERT_ID()", new
 			// ScalarHandler(1));
@@ -49,13 +50,13 @@ public class StoreHouseImpl {
 	}
 
 	public void update(StoreHouseBean storehouseBean) {
-		String ins_sql = "UPDATE storehouse SET p_name = ?, p_producer = ? , sale_price = ? , p_number = ? , p_text = ? , p_producer = ? , vip_price = ? , in_price = ? WHERE p_barcode = ?";
+		String ins_sql = "UPDATE storehouse SET p_name = ?, p_producer = ? , sale_price = ? , p_number = ? , p_text = ? , p_producer = ? , vip_price = ? , in_price = ? ,image = ? WHERE p_barcode = ?";
 		QueryRunner qr = new QueryRunner();
 		try {
 			qr.update(conn, ins_sql, storehouseBean.getP_name(), storehouseBean.getP_producer(),
 					storehouseBean.getSale_price(), storehouseBean.getP_number(), storehouseBean.getP_text(),
 					storehouseBean.getP_producer(), storehouseBean.getVip_price(), storehouseBean.getIn_price(),
-					storehouseBean.getP_barcode());
+					storehouseBean.getImage(), storehouseBean.getP_barcode());
 			// 获取新增记录的自增主键
 			// id = (Long) qr.query(conn, "SELECT LAST_INSERT_ID()", new
 			// ScalarHandler(1));

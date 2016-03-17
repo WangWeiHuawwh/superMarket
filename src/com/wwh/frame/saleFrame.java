@@ -1,6 +1,8 @@
 package com.wwh.frame;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
@@ -14,6 +16,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import com.wwh.bean.ConfigBean;
+import com.wwh.bean.ConfigImpl;
 import com.wwh.bean.SalesBean;
 import com.wwh.bean.SalesImpl;
 import com.wwh.bean.StoreHouseBean;
@@ -27,6 +31,8 @@ import com.wwh.utils.SQLiteCRUD;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -40,10 +46,18 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSpinner;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Robot;
+
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
 
 public class saleFrame extends JFrame {
 
@@ -52,7 +66,7 @@ public class saleFrame extends JFrame {
 	private JTextField textField_1;
 	private JTable jTable_data;
 	private boolean isVip = false;
-	private JButton button_1;
+	private JButton btnAdd;
 	private JButton button;
 	private JLabel vip_score_label;
 	private JLabel once_price_label;
@@ -70,6 +84,13 @@ public class saleFrame extends JFrame {
 	private SalesImpl salesImpl;
 	private int score = 0;
 	final JCheckBox checkBox;
+	JRadioButton rdbtnNewRadioButton;
+	JRadioButton rdbtnNewRadioButton_1;
+	JPanel grid_layout;
+	ConfigImpl configImpl = new ConfigImpl();
+	private final int MAX_W = 4;
+	private final int MAX_H = 6;
+	private final int MAX_NUMBER = MAX_W * MAX_H;
 
 	/**
 	 * Launch the application.
@@ -92,9 +113,10 @@ public class saleFrame extends JFrame {
 	 */
 	public saleFrame() {
 		setTitle("\u9500\u552E");
+
 		salesImpl = new SalesImpl();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 717);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 1073, 768);
 		contentPane = new JPanel();
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -106,7 +128,7 @@ public class saleFrame extends JFrame {
 
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(Color.BLUE));
-		panel.setBounds(21, 86, 726, 563);
+		panel.setBounds(21, 86, 726, 605);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
@@ -125,29 +147,23 @@ public class saleFrame extends JFrame {
 
 		JScrollPane scrollPane_data = new JScrollPane();
 		scrollPane_data.setPreferredSize(new Dimension(737, 251));
-		scrollPane_data.setBounds(226, 26, 444, 382);
+		scrollPane_data.setBounds(226, 43, 462, 235);
 		panel.add(scrollPane_data);
 
-		button_1 = new JButton("\u52A0\u5165\u8D2D\u7269\u8F66");
-		button_1.setBounds(93, 266, 123, 23);
-		panel.add(button_1);
+		btnAdd = new JButton("Add");
+		btnAdd.setBounds(144, 253, 72, 23);
+		panel.add(btnAdd);
 
-		once_price_label = new JLabel("\u5546\u54C1\u4EF7\u683C");
-		once_price_label.setBounds(93, 213, 94, 15);
+		once_price_label = new JLabel("\u5546\u54C1\u5355\u4EF7");
+		once_price_label.setBounds(109, 207, 87, 15);
 		panel.add(once_price_label);
-
-		sum_money = new JLabel("\u603B\u8BA1");
-		sum_money.setFont(new Font("宋体", Font.PLAIN, 20));
-		sum_money.setForeground(Color.RED);
-		sum_money.setBounds(406, 426, 112, 37);
-		panel.add(sum_money);
 		scrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
 			Object rowdata[][] = { { null, null, null, null, null, null, null } };
-			String names[] = { "编号", "名称", "价格", "会员", "数量" };
+			String names[] = { "编号", "名称", "克朗", "欧元", "会员", "数量" };
 
-			TableModel jTable_dataModel = new DefaultTableModel(new String[][] { { "编号", "名称", "价格", "会员", "数量" } },
-					new String[] { "", "", "", "", "" });
+			TableModel jTable_dataModel = new DefaultTableModel(
+					new String[][] { { "编号", "名称", "克朗", "欧元", "会员", "数量" } }, new String[] { "", "", "", "", "", "" });
 			jTable_data = new JTable(rowdata, names);
 
 			scrollPane_data.setViewportView(jTable_data);
@@ -157,55 +173,6 @@ public class saleFrame extends JFrame {
 		spinner = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
 		spinner.setBounds(82, 141, 54, 22);
 		panel.add(spinner);
-
-		JButton push_button = new JButton("\u8BA1\u7B97");
-		push_button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
-				Double sumMoney = 0d;
-				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
-					//
-					if (isVip) {
-						sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 3).toString())
-								* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
-					} else {
-						sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 2).toString())
-								* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
-					}
-				}
-				sum_money.setText(sumMoney + "");
-			}
-		});
-		push_button.setBounds(226, 435, 93, 23);
-		panel.add(push_button);
-
-		JLabel label_1 = new JLabel("*\u6536\u6B3E\uFF1A");
-		label_1.setBounds(515, 439, 49, 15);
-		panel.add(label_1);
-
-		get_money = new JTextField();
-		get_money.setBounds(574, 436, 96, 21);
-		panel.add(get_money);
-		get_money.setColumns(10);
-
-		pay_back_label = new JLabel("\u627E\u96F6");
-		pay_back_label.setFont(new Font("宋体", Font.PLAIN, 20));
-		pay_back_label.setForeground(Color.MAGENTA);
-		pay_back_label.setBounds(406, 480, 112, 37);
-		panel.add(pay_back_label);
-
-		btnNewButton = new JButton("\u4ED8\u6B3E");
-
-		btnNewButton.setBounds(577, 530, 93, 23);
-		panel.add(btnNewButton);
-
-		label_2 = new JLabel("\u603B\u8BA1\uFF1A");
-		label_2.setBounds(342, 439, 54, 15);
-		panel.add(label_2);
-
-		label_3 = new JLabel("\u627E\u96F6\uFF1A");
-		label_3.setBounds(342, 490, 54, 15);
-		panel.add(label_3);
 
 		label_4 = new JLabel("\u5546\u54C1\u540D\u79F0\uFF1A");
 		label_4.setBounds(10, 103, 72, 21);
@@ -224,31 +191,339 @@ public class saleFrame extends JFrame {
 				}
 			}
 		});
-		clear_button.setBounds(663, 0, 63, 23);
+		clear_button.setBounds(653, 10, 63, 23);
 		panel.add(clear_button);
 
+		JButton btnNewButton_2 = new JButton("\u2193\u2193");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				StoreHouseImpl storehouseImpl = new StoreHouseImpl();
+				StoreHouseBean storeHouseBean = storehouseImpl.findOne(textField_1.getText().trim());
+				if (storeHouseBean != null && storeHouseBean.getP_barcode().equals(textField_1.getText().trim())) {
+					ConfigBean configbean = configImpl.get();
+					String uproduce = configbean.getUproduce();
+					String[] uid = uproduce.split("\\|");
+					if (uid.length > MAX_NUMBER) {
+						JOptionPane.showMessageDialog(null, "设置超过上限!");
+						return;
+					}
+					for (int i = 0; i < uid.length; i++) {
+						if (uid[i].trim().equals(textField_1.getText().trim())) {
+							JOptionPane.showMessageDialog(null, "已经存在该商品");
+							return;
+						}
+					}
+					configbean.setUproduce(configbean.getUproduce() + "|" + textField_1.getText().trim());
+					configImpl.update(configbean);
+					updateGrid();
+				} else {
+					JOptionPane.showMessageDialog(null, "没有该商品信息");
+				}
+
+			}
+		});
+		btnNewButton_2.setBounds(10, 253, 63, 23);
+		panel.add(btnNewButton_2);
+
+		grid_layout = new JPanel();
+		grid_layout.setBounds(10, 288, 678, 306);
+		panel.add(grid_layout);
+		grid_layout.setLayout(new GridLayout(4, 6, 0, 0));
+
+		JButton btnNewButton_3 = new JButton("\u2191\u2191");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				StoreHouseImpl storehouseImpl = new StoreHouseImpl();
+				StoreHouseBean storeHouseBean = storehouseImpl.findOne(textField_1.getText().trim());
+				if (storeHouseBean != null && storeHouseBean.getP_barcode().equals(textField_1.getText().trim())) {
+					ConfigBean configbean = configImpl.get();
+					String uproduce = configbean.getUproduce();
+					String[] uid = uproduce.split("\\|");
+					StringBuffer sb = new StringBuffer();
+					for (int i = 0; i < uid.length; i++) {
+						if (uid[i].trim().equals(textField_1.getText().trim())) {
+							// JOptionPane.showMessageDialog(null, "已经存在该商品");
+						} else {
+							sb.append(uid[i].trim() + "|");
+						}
+					}
+					String sbb = sb.toString();
+					if (sb.toString().endsWith("|")) {
+						sbb = sb.toString().substring(0, sb.length() - 1);
+					}
+					configbean.setUproduce(sbb);
+					configImpl.update(configbean);
+					updateGrid();
+				} else {
+					JOptionPane.showMessageDialog(null, "没有该商品信息");
+				}
+			}
+		});
+		btnNewButton_3.setBounds(73, 253, 72, 23);
+		panel.add(btnNewButton_3);
+
 		final JPanel panel_vip = new JPanel();
-		panel_vip.setBorder(new LineBorder(Color.GREEN));
-		panel_vip.setBounds(94, 10, 391, 66);
+		panel_vip.setBorder(new LineBorder(Color.RED));
+		panel_vip.setBounds(94, 10, 653, 66);
 		contentPane.add(panel_vip);
 		panel_vip.setLayout(null);
 		panel_vip.setVisible(false);
 		textField = new JTextField();
-		textField.setBounds(89, 20, 102, 21);
+		textField.setBounds(127, 20, 171, 21);
 		panel_vip.add(textField);
 		textField.setColumns(10);
 		button = new JButton("\u6821\u9A8C\u4F1A\u5458");
 
-		button.setBounds(210, 19, 93, 23);
+		button.setBounds(340, 19, 93, 23);
 		panel_vip.add(button);
 
 		JLabel lblId = new JLabel("*phone\uFF1A");
-		lblId.setBounds(10, 23, 69, 15);
+		lblId.setBounds(33, 23, 69, 15);
 		panel_vip.add(lblId);
 
 		vip_score_label = new JLabel("\u79EF\u5206\uFF1A0");
-		vip_score_label.setBounds(327, 23, 54, 15);
+		vip_score_label.setBounds(479, 23, 93, 15);
 		panel_vip.add(vip_score_label);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(757, 382, 272, 300);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+
+		JButton btnNewButton_1 = new JButton("C");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (get_money.getText().length() > 0) {
+					get_money.setText(get_money.getText().substring(0, get_money.getText().length() - 1));
+				}
+			}
+		});
+		btnNewButton_1.setBounds(0, 0, 65, 54);
+		panel_1.add(btnNewButton_1);
+
+		JButton button_2 = new JButton("%");
+		button_2.setBounds(68, 0, 65, 54);
+		panel_1.add(button_2);
+
+		JButton button_3 = new JButton("*");
+		button_3.setBounds(137, 0, 65, 54);
+		panel_1.add(button_3);
+
+		JButton button_4 = new JButton("-");
+		button_4.setBounds(204, 0, 65, 54);
+		panel_1.add(button_4);
+
+		JButton button_5 = new JButton("7");
+		button_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "7");
+			}
+		});
+		button_5.setBounds(0, 60, 65, 54);
+		panel_1.add(button_5);
+
+		JButton button_6 = new JButton("8");
+		button_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "8");
+			}
+		});
+		button_6.setBounds(68, 60, 65, 54);
+		panel_1.add(button_6);
+
+		JButton button_7 = new JButton("9");
+		button_7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "9");
+			}
+		});
+		button_7.setBounds(137, 60, 65, 54);
+		panel_1.add(button_7);
+
+		JButton button_8 = new JButton("+");
+		button_8.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		button_8.setBounds(204, 60, 65, 112);
+		panel_1.add(button_8);
+
+		JButton button_9 = new JButton("4");
+		button_9.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "4");
+			}
+		});
+		button_9.setBounds(0, 118, 65, 54);
+		panel_1.add(button_9);
+
+		JButton button_10 = new JButton("5");
+		button_10.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "5");
+			}
+		});
+		button_10.setBounds(68, 118, 65, 54);
+		panel_1.add(button_10);
+
+		JButton button_11 = new JButton("6");
+		button_11.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "6");
+			}
+		});
+		button_11.setBounds(137, 118, 65, 54);
+		panel_1.add(button_11);
+
+		JButton button_12 = new JButton("=");
+		button_12.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (get_money.getText().length() > 0) {
+					Double backMoney = Double.parseDouble(get_money.getText())
+							- Double.parseDouble(sum_money.getText());
+					pay_back_label.setText(backMoney + "");
+				}
+			}
+		});
+		button_12.setBounds(204, 175, 65, 118);
+		panel_1.add(button_12);
+
+		JButton button_13 = new JButton("1");
+		button_13.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "1");
+			}
+		});
+		button_13.setBounds(0, 175, 65, 54);
+		panel_1.add(button_13);
+
+		JButton button_14 = new JButton("2");
+		button_14.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "2");
+			}
+		});
+		button_14.setBounds(68, 175, 65, 54);
+		panel_1.add(button_14);
+
+		JButton button_15 = new JButton("3");
+		button_15.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "3");
+			}
+		});
+		button_15.setBounds(137, 175, 65, 54);
+		panel_1.add(button_15);
+
+		JButton button_16 = new JButton(".");
+		button_16.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + ".");
+			}
+		});
+		button_16.setBounds(137, 239, 65, 54);
+		panel_1.add(button_16);
+
+		JButton button_17 = new JButton("0");
+		button_17.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				get_money.setText(get_money.getText() + "0");
+			}
+		});
+		button_17.setBounds(0, 239, 133, 54);
+		panel_1.add(button_17);
+
+		JPanel panel_2 = new JPanel();
+		panel_2.setBounds(757, 86, 287, 265);
+		contentPane.add(panel_2);
+		panel_2.setLayout(null);
+
+		JButton push_button = new JButton("\u8BA1\u7B97\u4EF7\u683C");
+		push_button.setBounds(10, 10, 81, 23);
+		panel_2.add(push_button);
+
+		label_2 = new JLabel("\u603B\u8BA1\uFF1A");
+		label_2.setBounds(22, 77, 54, 15);
+		panel_2.add(label_2);
+
+		sum_money = new JLabel("\u603B\u8BA1");
+		sum_money.setBounds(86, 64, 112, 37);
+		panel_2.add(sum_money);
+		sum_money.setFont(new Font("宋体", Font.PLAIN, 20));
+		sum_money.setForeground(Color.RED);
+
+		JLabel label_1 = new JLabel("*\u6536\u6B3E\uFF1A");
+		label_1.setBounds(22, 136, 49, 15);
+		panel_2.add(label_1);
+
+		get_money = new JTextField();
+		get_money.setBounds(90, 133, 96, 21);
+		panel_2.add(get_money);
+		get_money.setColumns(10);
+
+		label_3 = new JLabel("\u627E\u96F6\uFF1A");
+		label_3.setBounds(22, 188, 54, 15);
+		panel_2.add(label_3);
+
+		pay_back_label = new JLabel("\u627E\u96F6");
+		pay_back_label.setBounds(99, 175, 112, 37);
+		panel_2.add(pay_back_label);
+		pay_back_label.setFont(new Font("宋体", Font.PLAIN, 20));
+		pay_back_label.setForeground(Color.MAGENTA);
+
+		btnNewButton = new JButton("\u4ED8\u6B3E");
+		btnNewButton.setBounds(118, 232, 93, 23);
+		panel_2.add(btnNewButton);
+
+		rdbtnNewRadioButton = new JRadioButton("\u514B\u6717");
+		rdbtnNewRadioButton.setSelected(true);
+		rdbtnNewRadioButton.setBounds(109, 10, 86, 23);
+		rdbtnNewRadioButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if (arg0.getSource() == rdbtnNewRadioButton) {
+					rdbtnNewRadioButton.setSelected(true);
+					rdbtnNewRadioButton_1.setSelected(false);
+				}
+			}
+		});
+		panel_2.add(rdbtnNewRadioButton);
+		rdbtnNewRadioButton_1 = new JRadioButton("\u6B27\u5143");
+		rdbtnNewRadioButton_1.setBounds(109, 35, 77, 23);
+		rdbtnNewRadioButton_1.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if (arg0.getSource() == rdbtnNewRadioButton_1) {
+					rdbtnNewRadioButton.setSelected(false);
+					rdbtnNewRadioButton_1.setSelected(true);
+				}
+			}
+		});
+		panel_2.add(rdbtnNewRadioButton_1);
+		push_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+				Double sumMoney = 0d;
+				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+					//
+					if (isVip) {
+						sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 4).toString())
+								* Double.parseDouble(tableModel.getValueAt(i, 5).toString());
+					} else {
+						sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 2).toString())
+								* Double.parseDouble(tableModel.getValueAt(i, 5).toString());
+					}
+				}
+				if (rdbtnNewRadioButton_1.isSelected()) {
+					sumMoney = sumMoney * Application.getbili();
+				}
+				sum_money.setText(sumMoney + "");
+			}
+		});
 		checkBox.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				if (checkBox.isSelected()) {
@@ -323,7 +598,7 @@ public class saleFrame extends JFrame {
 			}
 
 		});
-		button_1.addActionListener(new ActionListener() {
+		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (isFull()) {
 					StoreHouseImpl storehouseImpl = new StoreHouseImpl();
@@ -336,8 +611,8 @@ public class saleFrame extends JFrame {
 						DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
 						// 添加下一行
 						tableModel.addRow(new Object[] { textField_1.getText(), storeHouseBean.getP_name(),
-								storeHouseBean.getSale_price(), storeHouseBean.getVip_price(),
-								Integer.parseInt(spinner.getValue().toString()), });
+								storeHouseBean.getSale_price(), storeHouseBean.getSale_price() * Application.getbili(),
+								storeHouseBean.getVip_price(), Integer.parseInt(spinner.getValue().toString()), });
 						// 将文本框中的内容清空，以便下一次输入
 						textField_1.setText("");
 						spinner.setValue(1);
@@ -377,13 +652,12 @@ public class saleFrame extends JFrame {
 						StoreHouseBean storeHouseBean = storeHouseimpl.findOne(tableModel.getValueAt(i, 0).toString());
 						// 更新库存量
 						if (storeHouseBean.getP_number()
-								- Integer.parseInt(tableModel.getValueAt(i, 4).toString()) < 0) {
-							// JOptionPane.showMessageDialog(null,
-							// "这个货余量不足");
-							continue;
+								- Integer.parseInt(tableModel.getValueAt(i, 5).toString()) < 0) {
+							JOptionPane.showMessageDialog(null, "编号:" + tableModel.getValueAt(i, 0) + "货余量不足");
+							return;
 						} else {
 							storeHouseBean.setP_number(storeHouseBean.getP_number()
-									- Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+									- Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
 							storeHouseimpl.update(storeHouseBean);
 						}
 						Double moeny = 0d;
@@ -391,56 +665,129 @@ public class saleFrame extends JFrame {
 						//
 						if (isVip) {
 							// 计算总价
-							sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 3).toString())
-									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+							sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 4).toString())
+									* Double.parseDouble(tableModel.getValueAt(i, 5).toString());
 							// 更新售货表
 							Date date = new Date(System.currentTimeMillis());
-							moeny = Double.parseDouble(tableModel.getValueAt(i, 3).toString())
-									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+							moeny = Double.parseDouble(tableModel.getValueAt(i, 4).toString())
+									* Double.parseDouble(tableModel.getValueAt(i, 5).toString());
 							salesBean.setBarcode(tableModel.getValueAt(i, 0).toString());
 							salesBean.setPrice(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
 							salesBean.setDate(dateFormat.format(date));
 							salesBean.setVip(vipPhone);
-							salesBean.setReal_price(Double.parseDouble(tableModel.getValueAt(i, 3).toString()));
-							salesBean.setNumber(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+							salesBean.setReal_price(Double.parseDouble(tableModel.getValueAt(i, 4).toString()));
+							salesBean.setNumber(Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
 							salesBean.setSummoney(moeny);
 							salesBean.setUser(Application.getEid());
 							salesImpl.insert(salesBean);
 
 						} else {
 							sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 2).toString())
-									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+									* Double.parseDouble(tableModel.getValueAt(i, 5).toString());
 							Date date = new Date(System.currentTimeMillis());
 							moeny = Double.parseDouble(tableModel.getValueAt(i, 2).toString())
-									* Double.parseDouble(tableModel.getValueAt(i, 4).toString());
+									* Double.parseDouble(tableModel.getValueAt(i, 5).toString());
 							salesBean.setBarcode(tableModel.getValueAt(i, 0).toString());
 							salesBean.setPrice(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
 							salesBean.setDate(dateFormat.format(date));
 							salesBean.setVip("null");
 							salesBean.setReal_price(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
-							salesBean.setNumber(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+							salesBean.setNumber(Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
 							salesBean.setSummoney(moeny);
 							salesBean.setUser(Application.getEid());
 							salesImpl.insert(salesBean);
 						}
 
 					}
-					Double backMoney = Double.parseDouble(get_money.getText()) - sumMoney;
-					if (isVip) {
-						VipImpl vipimpl = new VipImpl();
-						VipBean vipBean = new VipBean();
-						vipBean.setScore(score + (int) sumMoney);
-						vipBean.setPhone(vipPhone);
-						vipimpl.update(vipBean);
+					// 换成欧元
+					if (rdbtnNewRadioButton_1.isSelected()) {
+						sumMoney = sumMoney * Application.getbili();
+						Double backMoney = Double.parseDouble(get_money.getText()) - sumMoney;
+						if (isVip) {
+							VipImpl vipimpl = new VipImpl();
+							VipBean vipBean = new VipBean();
+							vipBean.setScore(score + (int) sumMoney);
+							vipBean.setPhone(vipPhone);
+							vipimpl.update(vipBean);
+						}
+
+						JOptionPane.showMessageDialog(null, "成功!找零:" + backMoney + "欧元");
+					} else {
+						sumMoney = sumMoney * Application.getbili();
+						Double backMoney = Double.parseDouble(get_money.getText()) - sumMoney;
+						if (isVip) {
+							VipImpl vipimpl = new VipImpl();
+							VipBean vipBean = new VipBean();
+							vipBean.setScore(score + (int) sumMoney);
+							vipBean.setPhone(vipPhone);
+							vipimpl.update(vipBean);
+						}
+
+						JOptionPane.showMessageDialog(null, "成功!找零:" + backMoney + "克朗");
+
 					}
 
-					JOptionPane.showMessageDialog(null, "成功!找零:" + backMoney);
 					clearAll();
 				} else {
 					JOptionPane.showMessageDialog(null, "填写收款");
 				}
 			}
 		});
+		ConfigBean configbean = configImpl.get();
+		Application.bili = configbean.getBili();
+		updateGrid();
+	}
+
+	private void updateGrid() {
+		// TODO Auto-generated method stub
+		grid_layout.removeAll();
+		ConfigBean configbean = configImpl.get();
+		String uproduce = configbean.getUproduce();
+		String[] uid = uproduce.split("\\|");
+		int wd = grid_layout.getWidth() / MAX_H;
+		int hi = grid_layout.getHeight() / MAX_W;
+		for (int i = 0; i < uid.length; i++) {
+			StoreHouseImpl storehouseImpl = new StoreHouseImpl();
+			final StoreHouseBean storeHouseBean = storehouseImpl.findOne(uid[i]);
+			JButton button = new JButton(storeHouseBean.getP_name());
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					if (storeHouseBean != null) {
+						textField_1.setText(storeHouseBean.getP_barcode());
+						name_label.setText(storeHouseBean.getP_name());
+						once_price_label.setText("单价:" + storeHouseBean.getSale_price());
+						spinner.setValue(1);
+					} else {
+						JOptionPane.showMessageDialog(null, "没有该商品信息");
+					}
+
+				}
+			});
+			grid_layout.add(button);
+			try {
+				String path = storeHouseBean.getImage().replace("\\\\", "\\\\\\\\");
+				if (path.length() > 0) {
+
+					ImageIcon icon = new ImageIcon(path);
+					Image temp = icon.getImage().getScaledInstance(wd, hi, icon.getImage().SCALE_DEFAULT);
+					icon = new ImageIcon(temp);
+					button.setIcon(icon);
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+
+			}
+		}
+
+		for (int i = uid.length; i < MAX_NUMBER; i++) {
+			JButton button = new JButton("null");
+			grid_layout.add(button);
+		}
+		grid_layout.updateUI();
+		grid_layout.repaint();
+		grid_layout.revalidate();
+		grid_layout.validate();
+
 	}
 
 	protected void clearAll() {
@@ -453,6 +800,8 @@ public class saleFrame extends JFrame {
 		pay_back_label.setText(0 + "");
 		get_money.setText("");
 		checkBox.setSelected(false);
+		name_label.setText("");
+		once_price_label.setText("");
 	}
 
 	protected boolean isFull() {

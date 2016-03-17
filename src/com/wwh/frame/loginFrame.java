@@ -19,6 +19,11 @@ import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 
 public class loginFrame {
 
@@ -57,10 +62,14 @@ public class loginFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(Color.PINK);
 		frame.setTitle("\u767B\u5F55");
-		frame.setBounds(100, 100, 495, 343);
+		frame.setBounds(100, 100, 511, 345);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+//		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();  
+//        Rectangle bounds = new Rectangle(screenSize);  
+//        frame.setBounds(bounds);  
 
 		JLabel label = new JLabel("\u7528\u6237\u540D\uFF1A");
 		label.setBounds(91, 82, 54, 15);
@@ -80,23 +89,31 @@ public class loginFrame {
 		frame.getContentPane().add(passwordField);
 
 		final JRadioButton rdbtnNewRadioButton = new JRadioButton("\u8FDB\u8D27\u767B\u5F55");
-
+		//rdbtnNewRadioButton.setBackground(new Color(0,0,0,Color.TRANSLUCENT));
 		rdbtnNewRadioButton.setSelected(true);
 		rdbtnNewRadioButton.setBounds(97, 175, 80, 23);
 		frame.getContentPane().add(rdbtnNewRadioButton);
 
 		final JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("\u9500\u552E\u767B\u5F55");
-		rdbtnNewRadioButton_1.setBounds(196, 175, 80, 23);
+		//rdbtnNewRadioButton_1.setBackground(new Color(0,0,0,Color.TRANSLUCENT));
+		rdbtnNewRadioButton_1.setBounds(179, 175, 80, 23);
 		frame.getContentPane().add(rdbtnNewRadioButton_1);
 
 		final JRadioButton rdbtnNewRadioButton_2 = new JRadioButton("\u7BA1\u7406\u5458\u767B\u5F55");
-		rdbtnNewRadioButton_2.setBounds(278, 175, 85, 23);
+		//rdbtnNewRadioButton_2.setBackground(new Color(0,0,0,Color.TRANSLUCENT));
+		rdbtnNewRadioButton_2.setBounds(261, 175, 100, 23);
 		frame.getContentPane().add(rdbtnNewRadioButton_2);
 
 		JButton btnNewButton = new JButton("\u767B\u5F55");
 
 		btnNewButton.setBounds(247, 228, 93, 23);
 		frame.getContentPane().add(btnNewButton);
+		
+		JLabel lblenter = new JLabel("\u6807\u7B7E\u524D\u5E26*\u7684\u90FD\u53EF\u4EE5\u5728\u8F93\u5165\u5B8C\u6210\u540E\u6309enter\u952E");
+		lblenter.setForeground(Color.GRAY);
+		lblenter.setFont(new Font("ËÎÌו", Font.BOLD, 11));
+		lblenter.setBounds(117, 37, 302, 15);
+		frame.getContentPane().add(lblenter);
 		rdbtnNewRadioButton.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				if (rdbtnNewRadioButton.isSelected()) {

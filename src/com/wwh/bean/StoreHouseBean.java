@@ -9,6 +9,19 @@ public class StoreHouseBean {
 	public String p_text;
 	public Double vip_price;
 	public Double in_price;
+	public String image;
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public void setP_number(Integer p_number) {
+		this.p_number = p_number;
+	}
 
 	public String getP_barcode() {
 		return p_barcode;

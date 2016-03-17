@@ -11,6 +11,7 @@ import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -29,6 +30,8 @@ import javax.swing.JTable;
 
 import java.awt.Dimension;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -50,6 +53,8 @@ public class buyFrame extends JFrame {
 	private JLabel label_4;
 	private JTextField textField_7;
 	StoreHouseImpl storeHouseimpl;
+	JFileChooser chooser;
+	JLabel path_label;
 
 	/**
 	 * Launch the application.
@@ -73,8 +78,8 @@ public class buyFrame extends JFrame {
 	public buyFrame() {
 		setTitle("\u8FDB\u8D27");
 		storeHouseimpl = new StoreHouseImpl();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 802, 586);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 889, 778);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -136,16 +141,16 @@ public class buyFrame extends JFrame {
 
 		jScrollPane_data = new JScrollPane();
 		jScrollPane_data.setPreferredSize(new Dimension(737, 251));
-		jScrollPane_data.setBounds(220, 40, 543, 332);
+		jScrollPane_data.setBounds(236, 40, 627, 490);
 		contentPane.add(jScrollPane_data);
 		jScrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
 			Object rowdata[][] = { { null, null, null, null, null, null, null } };
-			String names[] = { "编号", "名称", "厂商", "进货价", "销售价", "vip", "数量", "备注" };
+			String names[] = { "编号", "名称", "厂商", "进货价", "销售价", "vip", "数量", "备注", "图片路径" };
 
 			TableModel jTable_dataModel = new DefaultTableModel(
-					new String[][] { { "编号", "名称", "厂商", "进货价", "销售价", "vip", "数量", "备注" } },
-					new String[] { "", "", "", "", "", "", "", "" });
+					new String[][] { { "编号", "名称", "厂商", "进货价", "销售价", "vip", "数量", "备注", "图片路径" } },
+					new String[] { "", "", "", "", "", "", "", "", "" });
 			jTable_data = new JTable(rowdata, names);
 
 			jScrollPane_data.setViewportView(jTable_data);
@@ -163,7 +168,7 @@ public class buyFrame extends JFrame {
 
 		button = new JButton("\u52A0\u5165\u5217\u8868");
 
-		button.setBounds(110, 367, 93, 23);
+		button.setBounds(133, 507, 93, 23);
 		contentPane.add(button);
 
 		button_1 = new JButton("\u786E\u8BA4\u8FDB\u8D27");
@@ -186,6 +191,7 @@ public class buyFrame extends JFrame {
 					newStoreHouseBean.setP_text(value[7]);
 					newStoreHouseBean.setVip_price(Double.parseDouble(value[5]));
 					newStoreHouseBean.setIn_price(Double.parseDouble(value[3]));
+					newStoreHouseBean.setImage(value[8]);
 					if (storehouseBean != null
 							&& storehouseBean.p_barcode.equals(tableModel.getValueAt(i, 0).toString().trim())) {
 						newStoreHouseBean.setP_number(newStoreHouseBean.getP_number() + storehouseBean.getP_number());
@@ -220,7 +226,7 @@ public class buyFrame extends JFrame {
 
 			}
 		});
-		button_1.setBounds(632, 407, 93, 23);
+		button_1.setBounds(702, 581, 93, 23);
 		contentPane.add(button_1);
 
 		label_4 = new JLabel("\u9500\u552E\u4EF7\u683C\uFF1A");
@@ -231,6 +237,27 @@ public class buyFrame extends JFrame {
 		textField_7.setBounds(110, 213, 90, 21);
 		contentPane.add(textField_7);
 		textField_7.setColumns(10);
+
+		path_label = new JLabel("");
+		path_label.setBounds(110, 391, 104, 21);
+		contentPane.add(path_label);
+
+		JButton btnNewButton = new JButton("\u56FE\u7247");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif");
+				chooser.setFileFilter(filter);
+				int returnVal = chooser.showOpenDialog(chooser);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					path_label.setText(chooser.getSelectedFile().getAbsolutePath());
+
+				}
+			}
+		});
+		btnNewButton.setBounds(33, 391, 69, 23);
+		contentPane.add(btnNewButton);
 		init();
 	}
 
@@ -280,7 +307,7 @@ public class buyFrame extends JFrame {
 					// 添加下一行
 					tableModel.addRow(new Object[] { textField.getText(), textField_1.getText(), textField_2.getText(),
 							textField_3.getText(), textField_7.getText(), textField_4.getText(), textField_5.getText(),
-							textField_6.getText() });
+							textField_6.getText(), path_label.getText() });
 					// 将文本框中的内容清空，以便下一次输入
 					clearTextField();
 				} else {
@@ -310,5 +337,6 @@ public class buyFrame extends JFrame {
 		textField_5.setText("");
 		textField_6.setText("");
 		textField_7.setText("");
+		path_label.setText("");
 	}
 }

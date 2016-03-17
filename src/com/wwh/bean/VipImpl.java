@@ -2,9 +2,11 @@ package com.wwh.bean;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import com.wwh.utils.DbManager;
 
@@ -49,5 +51,17 @@ public class VipImpl {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<VipBean> getAll() {
+		QueryRunner qr = new QueryRunner();
+		try {
+			List<VipBean> pset = (List) qr.query(conn, "SELECT * FROM vip", new BeanListHandler(VipBean.class));
+			return pset;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 }

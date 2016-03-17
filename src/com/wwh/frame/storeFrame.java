@@ -57,7 +57,7 @@ public class storeFrame extends JFrame {
 	public storeFrame() {
 		setTitle("\u67E5\u8BE2");
 		storeHouseImpl = new StoreHouseImpl();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 798, 626);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -66,7 +66,7 @@ public class storeFrame extends JFrame {
 
 		JScrollPane jScrollPane_data = new JScrollPane();
 		jScrollPane_data.setPreferredSize(new Dimension(737, 251));
-		jScrollPane_data.setBounds(192, 39, 543, 445);
+		jScrollPane_data.setBounds(192, 39, 567, 445);
 		contentPane.add(jScrollPane_data);
 		jScrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
@@ -169,6 +169,10 @@ public class storeFrame extends JFrame {
 		JLabel label_2 = new JLabel("\u7CBE\u786E\u67E5\u627E\uFF1A");
 		label_2.setBounds(10, 10, 76, 15);
 		panel_1.add(label_2);
+		
+		JLabel lblNewLabel_2 = new JLabel("\u9ED8\u8BA4\u8B66\u62A5\u6570100");
+		lblNewLabel_2.setBounds(439, 14, 132, 15);
+		contentPane.add(lblNewLabel_2);
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (textField.getText().length() > 0) {

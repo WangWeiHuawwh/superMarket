@@ -23,6 +23,10 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class userFrame extends JFrame {
 
@@ -30,10 +34,10 @@ public class userFrame extends JFrame {
 	private JTable jTable_data;
 	private JTextField textField;
 	private JTextField textField_1;
-	private JTextField textField_2;
 	private JTextField textField_3;
 	private JTextField textField_4;
 	private UserImpl userimpl;
+	private JComboBox comboBox;
 
 	/**
 	 * Launch the application.
@@ -57,7 +61,7 @@ public class userFrame extends JFrame {
 	public userFrame() {
 		userimpl = new UserImpl();
 		setTitle("\u5458\u5DE5");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 638, 575);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -103,11 +107,6 @@ public class userFrame extends JFrame {
 		label_2.setBounds(10, 164, 54, 15);
 		contentPane.add(label_2);
 
-		textField_2 = new JTextField();
-		textField_2.setBounds(61, 161, 82, 21);
-		contentPane.add(textField_2);
-		textField_2.setColumns(10);
-
 		JLabel label_3 = new JLabel("\u5BC6\u7801\uFF1A");
 		label_3.setBounds(10, 215, 54, 15);
 		contentPane.add(label_3);
@@ -133,7 +132,18 @@ public class userFrame extends JFrame {
 					UserBean userBean = new UserBean();
 					userBean.setEid(textField.getText().trim());
 					userBean.setEname(textField_1.getText().trim());
-					userBean.setJob(textField_2.getText().trim());
+					switch (comboBox.getSelectedIndex()) {
+					case 0:
+						userBean.setJob("saler");
+						break;
+					case 1:
+						userBean.setJob("buyer");
+						break;
+					case 3:
+						userBean.setJob("admin");
+						break;
+
+					}
 					userBean.setPwd(textField_3.getText().trim());
 					userBean.setPhone(textField_4.getText().trim());
 					userimpl.save(userBean);
@@ -144,13 +154,19 @@ public class userFrame extends JFrame {
 		});
 		button.setBounds(76, 352, 93, 23);
 		contentPane.add(button);
+
+		comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(
+				new String[] { "\u552E\u8D27\u5458", "\u8FDB\u8D27\u5458", "\u7BA1\u7406\u5458" }));
+		comboBox.setBounds(61, 161, 86, 21);
+		contentPane.add(comboBox);
 		initData();
 	}
 
 	protected boolean isFull() {
 		// TODO Auto-generated method stub
-		if (textField.getText().length() > 0 && textField_1.getText().length() > 0 && textField_2.getText().length() > 0
-				&& textField_3.getText().length() > 0 && textField_4.getText().length() > 0) {
+		if (textField.getText().length() > 0 && textField_1.getText().length() > 0 && textField_3.getText().length() > 0
+				&& textField_4.getText().length() > 0) {
 			return true;
 		} else {
 			return false;
@@ -160,7 +176,6 @@ public class userFrame extends JFrame {
 	public void initData() {
 		textField.setText("");
 		textField_1.setText("");
-		textField_2.setText("");
 		textField_3.setText("");
 		textField_4.setText("");
 		DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
