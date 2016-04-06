@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 public class SQLiteCRUD {
 
 	private Connection connection;
@@ -204,6 +206,7 @@ public class SQLiteCRUD {
 			return value;
 		} catch (Exception e) {
 			System.out.println("查询表sql数据时异常 : " + e.getLocalizedMessage());
+			JOptionPane.showMessageDialog(null, "查询表sql数据时异常 : " + e.getLocalizedMessage());
 			return value;
 		}
 	}

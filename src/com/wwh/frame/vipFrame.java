@@ -62,7 +62,7 @@ public class vipFrame extends JFrame {
 		setTitle("\u4F1A\u5458");
 		vipImpl = new VipImpl();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 740, 487);
+		setBounds(100, 100, 1024, 768);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 175, 175));
 		contentPane.setForeground(Color.WHITE);
@@ -152,7 +152,7 @@ public class vipFrame extends JFrame {
 
 		JScrollPane jScrollPane_data = new JScrollPane();
 		jScrollPane_data.setPreferredSize(new Dimension(737, 251));
-		jScrollPane_data.setBounds(207, 47, 492, 370);
+		jScrollPane_data.setBounds(207, 47, 746, 612);
 		contentPane.add(jScrollPane_data);
 		jScrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{

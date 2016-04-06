@@ -46,8 +46,8 @@ public class saleRecordFrame extends JFrame {
 	public saleRecordFrame() {
 		setTitle("\u9500\u552E\u8BB0\u5F55");
 		salesImpl = new SalesImpl();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 741, 608);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 1024, 778);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -55,7 +55,7 @@ public class saleRecordFrame extends JFrame {
 
 		JScrollPane jScrollPane_data = new JScrollPane();
 		jScrollPane_data.setPreferredSize(new Dimension(737, 251));
-		jScrollPane_data.setBounds(67, 29, 598, 515);
+		jScrollPane_data.setBounds(34, 29, 942, 701);
 		contentPane.add(jScrollPane_data);
 		jScrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{

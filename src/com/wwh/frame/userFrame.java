@@ -62,7 +62,7 @@ public class userFrame extends JFrame {
 		userimpl = new UserImpl();
 		setTitle("\u5458\u5DE5");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 638, 575);
+		setBounds(100, 100, 1024, 768);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -70,7 +70,7 @@ public class userFrame extends JFrame {
 
 		JScrollPane jScrollPane_data = new JScrollPane();
 		jScrollPane_data.setPreferredSize(new Dimension(737, 251));
-		jScrollPane_data.setBounds(182, 49, 430, 445);
+		jScrollPane_data.setBounds(182, 49, 756, 616);
 		contentPane.add(jScrollPane_data);
 		jScrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
@@ -139,7 +139,7 @@ public class userFrame extends JFrame {
 					case 1:
 						userBean.setJob("buyer");
 						break;
-					case 3:
+					case 2:
 						userBean.setJob("admin");
 						break;
 
@@ -149,6 +149,9 @@ public class userFrame extends JFrame {
 					userimpl.save(userBean);
 					JOptionPane.showMessageDialog(null, "添加成功");
 					initData();
+				} else {
+					JOptionPane.showMessageDialog(null, "信息录入不全");
+
 				}
 			}
 		});

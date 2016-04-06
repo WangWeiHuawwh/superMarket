@@ -47,7 +47,7 @@ public class settingFrame extends JFrame {
 
 	public settingFrame() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 532, 374);
+		setBounds(100, 100, 552, 374);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

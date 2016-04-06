@@ -29,6 +29,8 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -67,7 +69,7 @@ public class caculateFrame extends JFrame {
 
 	public caculateFrame() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 768, 605);
+		setBounds(100, 100, 1024, 768);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -84,18 +86,18 @@ public class caculateFrame extends JFrame {
 		btnNewButton.setBounds(36, 26, 93, 23);
 		contentPane.add(btnNewButton);
 
-		btnNewButton_1 = new JButton("\u6309\u5E74\u5BFC\u51FA");
+		btnNewButton_1 = new JButton("\u6309\u5E74\u67E5\u8BE2");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				uploadYear();
 			}
 		});
-		btnNewButton_1.setBounds(649, 83, 93, 23);
+		btnNewButton_1.setBounds(873, 91, 93, 23);
 		contentPane.add(btnNewButton_1);
 
 		JScrollPane scrollPane_data = new JScrollPane();
 		scrollPane_data.setPreferredSize(new Dimension(737, 251));
-		scrollPane_data.setBounds(36, 83, 603, 456);
+		scrollPane_data.setBounds(36, 83, 749, 563);
 		contentPane.add(scrollPane_data);
 		scrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
@@ -111,8 +113,118 @@ public class caculateFrame extends JFrame {
 			jTable_data.setModel(jTable_dataModel);
 		}
 
-		JButton btnNewButton_2 = new JButton("\u6309\u6708\u5BFC\u51FA");
+		JButton btnNewButton_2 = new JButton("\u6309\u6708\u67E5\u8BE2");
 		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String[] time = lblNewLabel.getText().trim().split("[.]");
+				if (time.length != 3)
+					return;
+				List<CaculateBean> caculateList = caculateImpl.getmoth(time[0], time[1]);
+				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+					tableModel.removeRow(i);
+				}
+				for (CaculateBean c : caculateList) {
+					tableModel.addRow(new Object[] { c.getBarcode(), c.getP_name(), c.getP_producer(),
+							c.getSum_number(), c.getAll_in(), c.getSum_money(), c.getGet_money() });
+				}
+				
+
+			}
+		});
+		btnNewButton_2.setBounds(873, 142, 93, 23);
+		contentPane.add(btnNewButton_2);
+
+		JButton btnNewButton_3 = new JButton("\u6309\u65E5\u67E5\u8BE2");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String[] time = lblNewLabel.getText().trim().split("[.]");
+				if (time.length != 3)
+					return;
+				List<CaculateBean> caculateList = caculateImpl.getday(time[0], time[1], time[2]);
+				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+					tableModel.removeRow(i);
+				}
+				for (CaculateBean c : caculateList) {
+					tableModel.addRow(new Object[] { c.getBarcode(), c.getP_name(), c.getP_producer(),
+							c.getSum_number(), c.getAll_in(), c.getSum_money(), c.getGet_money() });
+				}
+				
+			}
+		});
+		btnNewButton_3.setBounds(873, 195, 93, 23);
+		contentPane.add(btnNewButton_3);
+		
+		JButton button = new JButton("\u6309\u5E74\u5BFC\u51FA");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String[] time = lblNewLabel.getText().trim().split("[.]");
+				if (time.length != 3)
+					return;
+				List<CaculateBean> caculateList = caculateImpl.getyear(time[0]);
+				DefaultTableModel tableModel = (DefaultTableModel) jTable_data.getModel();
+				for (int i = tableModel.getRowCount() - 1; i > 0; i--) {
+					tableModel.removeRow(i);
+				}
+				for (CaculateBean c : caculateList) {
+					tableModel.addRow(new Object[] { c.getBarcode(), c.getP_name(), c.getP_producer(), c.getSum_number(),
+							c.getAll_in(), c.getSum_money(), c.getGet_money() });
+				}
+				// 创建工作薄
+				WritableWorkbook workbook;
+				try {
+					workbook = Workbook.createWorkbook(new File(time[0] + "year.xls"));
+					// 创建新的一页
+					WritableSheet sheet = workbook.createSheet("统计", 0);
+					// 创建要显示的内容,创建一个单元格，第一个参数为列坐标，第二个参数为行坐标，第三个参数为内容
+					Label head0 = new Label(0, 0, "编号");
+					sheet.addCell(head0);
+					Label head1 = new Label(1, 0, "名称");
+					sheet.addCell(head1);
+					Label head2 = new Label(2, 0, "厂商");
+					sheet.addCell(head2);
+					Label head3 = new Label(3, 0, "销售数量");
+					sheet.addCell(head3);
+					Label head4 = new Label(4, 0, "总进价");
+					sheet.addCell(head4);
+					Label head5 = new Label(5, 0, "总销售额");
+					sheet.addCell(head5);
+					Label head6 = new Label(6, 0, "盈利");
+					sheet.addCell(head6);
+					int i = 1;
+					for (CaculateBean c : caculateList) {
+						Label headnew = new Label(0, i, c.getBarcode());
+						sheet.addCell(headnew);
+						Label headnew2 = new Label(1, i, c.getP_name());
+						sheet.addCell(headnew2);
+						Label headnew3 = new Label(2, i, c.getP_producer());
+						sheet.addCell(headnew3);
+						Label headnew4 = new Label(3, i, c.getSum_number() + "");
+						sheet.addCell(headnew4);
+						Label headnew5 = new Label(4, i, c.getAll_in() + "");
+						sheet.addCell(headnew5);
+						Label headnew6 = new Label(5, i, c.getSum_money() + "");
+						sheet.addCell(headnew6);
+						Label headnew7 = new Label(6, i, c.getGet_money() + "");
+						sheet.addCell(headnew7);
+						i++;
+					}
+					// 把创建的内容写入到输出流中，并关闭输出流
+					workbook.write();
+					workbook.close();
+					JOptionPane.showMessageDialog(null, "导出成功");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		button.setBounds(873, 494, 93, 23);
+		contentPane.add(button);
+		
+		JButton button_1 = new JButton("\u6309\u6708\u5BFC\u51FA");
+		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String[] time = lblNewLabel.getText().trim().split("[.]");
 				if (time.length != 3)
@@ -168,19 +280,19 @@ public class caculateFrame extends JFrame {
 					// 把创建的内容写入到输出流中，并关闭输出流
 					workbook.write();
 					workbook.close();
+					JOptionPane.showMessageDialog(null, "导出成功");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		});
-		btnNewButton_2.setBounds(649, 131, 93, 23);
-		contentPane.add(btnNewButton_2);
-
-		JButton btnNewButton_3 = new JButton("\u6309\u65E5\u5BFC\u51FA");
-		btnNewButton_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		button_1.setBounds(873, 563, 93, 23);
+		contentPane.add(button_1);
+		
+		JButton button_2 = new JButton("\u6309\u65E5\u5BFC\u51FA");
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				String[] time = lblNewLabel.getText().trim().split("[.]");
 				if (time.length != 3)
 					return;
@@ -236,14 +348,19 @@ public class caculateFrame extends JFrame {
 					// 把创建的内容写入到输出流中，并关闭输出流
 					workbook.write();
 					workbook.close();
-				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "导出成功");
+				} catch (Exception e1) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e1.printStackTrace();
 				}
 			}
 		});
-		btnNewButton_3.setBounds(649, 184, 93, 23);
-		contentPane.add(btnNewButton_3);
+		button_2.setBounds(873, 623, 93, 23);
+		contentPane.add(button_2);
+		
+		JLabel label = new JLabel("\u6CE8\uFF1A\u5BFC\u51FA\u76EE\u5F55\u751F\u6210\u5728\u76EE\u5F55\u4E0B");
+		label.setBounds(36, 682, 394, 15);
+		contentPane.add(label);
 
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -272,52 +389,7 @@ public class caculateFrame extends JFrame {
 			tableModel.addRow(new Object[] { c.getBarcode(), c.getP_name(), c.getP_producer(), c.getSum_number(),
 					c.getAll_in(), c.getSum_money(), c.getGet_money() });
 		}
-		// 创建工作薄
-		WritableWorkbook workbook;
-		try {
-			workbook = Workbook.createWorkbook(new File(time[0] + "year.xls"));
-			// 创建新的一页
-			WritableSheet sheet = workbook.createSheet("统计", 0);
-			// 创建要显示的内容,创建一个单元格，第一个参数为列坐标，第二个参数为行坐标，第三个参数为内容
-			Label head0 = new Label(0, 0, "编号");
-			sheet.addCell(head0);
-			Label head1 = new Label(1, 0, "名称");
-			sheet.addCell(head1);
-			Label head2 = new Label(2, 0, "厂商");
-			sheet.addCell(head2);
-			Label head3 = new Label(3, 0, "销售数量");
-			sheet.addCell(head3);
-			Label head4 = new Label(4, 0, "总进价");
-			sheet.addCell(head4);
-			Label head5 = new Label(5, 0, "总销售额");
-			sheet.addCell(head5);
-			Label head6 = new Label(6, 0, "盈利");
-			sheet.addCell(head6);
-			int i = 1;
-			for (CaculateBean c : caculateList) {
-				Label headnew = new Label(0, i, c.getBarcode());
-				sheet.addCell(headnew);
-				Label headnew2 = new Label(1, i, c.getP_name());
-				sheet.addCell(headnew2);
-				Label headnew3 = new Label(2, i, c.getP_producer());
-				sheet.addCell(headnew3);
-				Label headnew4 = new Label(3, i, c.getSum_number() + "");
-				sheet.addCell(headnew4);
-				Label headnew5 = new Label(4, i, c.getAll_in() + "");
-				sheet.addCell(headnew5);
-				Label headnew6 = new Label(5, i, c.getSum_money() + "");
-				sheet.addCell(headnew6);
-				Label headnew7 = new Label(6, i, c.getGet_money() + "");
-				sheet.addCell(headnew7);
-				i++;
-			}
-			// 把创建的内容写入到输出流中，并关闭输出流
-			workbook.write();
-			workbook.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 	}
 }

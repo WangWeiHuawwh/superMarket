@@ -55,6 +55,7 @@ public class buyFrame extends JFrame {
 	StoreHouseImpl storeHouseimpl;
 	JFileChooser chooser;
 	JLabel path_label;
+	private JLabel label_5;
 
 	/**
 	 * Launch the application.
@@ -79,7 +80,7 @@ public class buyFrame extends JFrame {
 		setTitle("\u8FDB\u8D27");
 		storeHouseimpl = new StoreHouseImpl();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 889, 778);
+		setBounds(100, 100, 1024, 778);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -141,7 +142,7 @@ public class buyFrame extends JFrame {
 
 		jScrollPane_data = new JScrollPane();
 		jScrollPane_data.setPreferredSize(new Dimension(737, 251));
-		jScrollPane_data.setBounds(236, 40, 627, 490);
+		jScrollPane_data.setBounds(236, 40, 716, 578);
 		contentPane.add(jScrollPane_data);
 		jScrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
@@ -168,7 +169,7 @@ public class buyFrame extends JFrame {
 
 		button = new JButton("\u52A0\u5165\u5217\u8868");
 
-		button.setBounds(133, 507, 93, 23);
+		button.setBounds(124, 490, 93, 23);
 		contentPane.add(button);
 
 		button_1 = new JButton("\u786E\u8BA4\u8FDB\u8D27");
@@ -226,7 +227,7 @@ public class buyFrame extends JFrame {
 
 			}
 		});
-		button_1.setBounds(702, 581, 93, 23);
+		button_1.setBounds(846, 667, 93, 23);
 		contentPane.add(button_1);
 
 		label_4 = new JLabel("\u9500\u552E\u4EF7\u683C\uFF1A");
@@ -256,8 +257,12 @@ public class buyFrame extends JFrame {
 				}
 			}
 		});
-		btnNewButton.setBounds(33, 391, 69, 23);
+		btnNewButton.setBounds(47, 403, 69, 23);
 		contentPane.add(btnNewButton);
+		
+		label_5 = new JLabel("\u6CE8\uFF1A\u56FE\u7247\uFF08\u53EF\u9009\uFF09\u5B58\u653E\u5728\u6307\u5B9A\u6587\u4EF6\u5939\u4E0D\u8981\u79FB\u52A8");
+		label_5.setBounds(34, 643, 364, 21);
+		contentPane.add(label_5);
 		init();
 	}
 

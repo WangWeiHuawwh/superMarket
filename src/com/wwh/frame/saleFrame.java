@@ -7,7 +7,14 @@ import java.awt.Checkbox;
 import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.print.Book;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JFrame;
@@ -52,6 +59,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JSpinner;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Robot;
@@ -86,6 +94,7 @@ public class saleFrame extends JFrame {
 	final JCheckBox checkBox;
 	JRadioButton rdbtnNewRadioButton;
 	JRadioButton rdbtnNewRadioButton_1;
+	JButton push_button;
 	JPanel grid_layout;
 	ConfigImpl configImpl = new ConfigImpl();
 	private final int MAX_W = 4;
@@ -438,7 +447,7 @@ public class saleFrame extends JFrame {
 		contentPane.add(panel_2);
 		panel_2.setLayout(null);
 
-		JButton push_button = new JButton("\u8BA1\u7B97\u4EF7\u683C");
+		push_button = new JButton("\u8BA1\u7B97");
 		push_button.setBounds(10, 10, 81, 23);
 		panel_2.add(push_button);
 
@@ -472,7 +481,7 @@ public class saleFrame extends JFrame {
 		pay_back_label.setForeground(Color.MAGENTA);
 
 		btnNewButton = new JButton("\u4ED8\u6B3E");
-		btnNewButton.setBounds(118, 232, 93, 23);
+		btnNewButton.setBounds(144, 232, 93, 23);
 		panel_2.add(btnNewButton);
 
 		rdbtnNewRadioButton = new JRadioButton("\u514B\u6717");
@@ -486,6 +495,7 @@ public class saleFrame extends JFrame {
 				if (arg0.getSource() == rdbtnNewRadioButton) {
 					rdbtnNewRadioButton.setSelected(true);
 					rdbtnNewRadioButton_1.setSelected(false);
+					push_button.doClick();
 				}
 			}
 		});
@@ -500,6 +510,7 @@ public class saleFrame extends JFrame {
 				if (arg0.getSource() == rdbtnNewRadioButton_1) {
 					rdbtnNewRadioButton.setSelected(false);
 					rdbtnNewRadioButton_1.setSelected(true);
+					push_button.doClick();
 				}
 			}
 		});
@@ -643,6 +654,11 @@ public class saleFrame extends JFrame {
 		});
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Date datetime = new Date();
+				String xiaopiao = "小票\n-------------------------------------------------\n"
+						+ dateFormat.format(datetime) + "\n-------------------------------------------------\n";
+				xiaopiao = xiaopiao + "编号 ---名称---原价---数量--- 售价\n";
+				ArrayList<SalesBean> xiaopiaoList = new ArrayList<SalesBean>();
 				if (get_money.getText().length() > 0) {
 
 					double sumMoney = 0d;
@@ -680,6 +696,11 @@ public class saleFrame extends JFrame {
 							salesBean.setSummoney(moeny);
 							salesBean.setUser(Application.getEid());
 							salesImpl.insert(salesBean);
+							xiaopiao = xiaopiao + "" + tableModel.getValueAt(i, 0).toString() + "---"
+									+ tableModel.getValueAt(i, 1).toString() + "---"
+									+ Double.parseDouble(tableModel.getValueAt(i, 2).toString()) + "---"
+									+ Integer.parseInt(tableModel.getValueAt(i, 5).toString()) + "---"
+									+ Double.parseDouble(tableModel.getValueAt(i, 4).toString()) + "\n";
 
 						} else {
 							sumMoney = sumMoney + Double.parseDouble(tableModel.getValueAt(i, 2).toString())
@@ -696,9 +717,17 @@ public class saleFrame extends JFrame {
 							salesBean.setSummoney(moeny);
 							salesBean.setUser(Application.getEid());
 							salesImpl.insert(salesBean);
+							xiaopiao = xiaopiao + "" + tableModel.getValueAt(i, 0).toString() + "---"
+									+ tableModel.getValueAt(i, 1).toString() + "---"
+									+ Double.parseDouble(tableModel.getValueAt(i, 2).toString()) + "---"
+									+ Integer.parseInt(tableModel.getValueAt(i, 5).toString()) + "---"
+									+ Double.parseDouble(tableModel.getValueAt(i, 2).toString()) + "\n";
 						}
+						xiaopiaoList.add(salesBean);
 
 					}
+					xiaopiao = xiaopiao + "-------------------------------------------------\n";
+					String backMoneyString;
 					// 换成欧元
 					if (rdbtnNewRadioButton_1.isSelected()) {
 						sumMoney = sumMoney * Application.getbili();
@@ -710,10 +739,9 @@ public class saleFrame extends JFrame {
 							vipBean.setPhone(vipPhone);
 							vipimpl.update(vipBean);
 						}
-
-						JOptionPane.showMessageDialog(null, "成功!找零:" + backMoney + "欧元");
+						backMoneyString = xiaopiao + "找零:" + backMoney + "欧元";
+						JOptionPane.showMessageDialog(null, xiaopiao + "找零:" + backMoney + "欧元");
 					} else {
-						sumMoney = sumMoney * Application.getbili();
 						Double backMoney = Double.parseDouble(get_money.getText()) - sumMoney;
 						if (isVip) {
 							VipImpl vipimpl = new VipImpl();
@@ -722,11 +750,12 @@ public class saleFrame extends JFrame {
 							vipBean.setPhone(vipPhone);
 							vipimpl.update(vipBean);
 						}
-
-						JOptionPane.showMessageDialog(null, "成功!找零:" + backMoney + "克朗");
+						backMoneyString = xiaopiao + "找零:" + backMoney + "克朗";
+						JOptionPane.showMessageDialog(null, xiaopiao + "找零:" + backMoney + "克朗");
 
 					}
-
+					PrintWarranty print = new PrintWarranty(xiaopiaoList, backMoneyString);
+					print.startPrint();
 					clearAll();
 				} else {
 					JOptionPane.showMessageDialog(null, "填写收款");
@@ -774,6 +803,7 @@ public class saleFrame extends JFrame {
 					button.setIcon(icon);
 				}
 			} catch (Exception e) {
+				// JOptionPane.showMessageDialog(null, "无图片"+e.getMessage());
 				System.out.println(e.getMessage());
 
 			}
@@ -811,4 +841,73 @@ public class saleFrame extends JFrame {
 		}
 		return false;
 	}
+
+	public class PrintWarranty implements Printable {
+		ArrayList<SalesBean> xiaopiaoList;
+		String backmoneyString;
+
+		public PrintWarranty(ArrayList<SalesBean> xiaopiaoList, String s) {
+			this.xiaopiaoList = xiaopiaoList;
+			backmoneyString = s;
+		}
+
+		@Override
+		public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+			// TODO Auto-generated method stub
+			if (pageIndex > 0) {
+				return NO_SUCH_PAGE;
+			}
+
+			Graphics2D g2d = (Graphics2D) graphics;
+			g2d.setFont(new Font("Default", Font.PLAIN, 10));
+			g2d.drawString("小票", 50, 10);
+			Date datetime = new Date();
+			g2d.drawString("时间：" + dateFormat.format(datetime), 7, 20);
+			g2d.drawString("-------------------------------------", 7, 20);
+			g2d.drawString("编号 ---名称---原价---数量--- 售价", 7, 20);
+			for (SalesBean sales : xiaopiaoList) {
+				g2d.drawString(sales.getBarcode() + " " + sales.getReal_price() + " " + sales.getNumber() + " "
+						+ sales.getReal_price(), 7, 35);
+			}
+			g2d.drawString(backmoneyString, 7, 20);
+			// g2d.drawString("手机号码：11111111111", 7, 35);
+			// g2d.drawString("领号日期：" + "11111", 7, 65);
+			// g2d.drawString("-------------------------------------", 7, 80);
+			// g2d.setFont(new Font("Default", Font.PLAIN, 25));
+			// g2d.drawString("小号", 7, 105);
+			// g2d.setFont(new Font("Default", Font.PLAIN, 14));
+			// g2d.drawString("您之前还有" + 5 + "桌客人在等待", 7, 130);
+			// g2d.drawString("-------------------------------------", 7, 145);
+			// g2d.drawString("*打印时间:" + "1111" + "*", 7, 160);
+			// g2d.drawString("店名：11", 7, 175);
+
+			return PAGE_EXISTS;
+		}
+
+		public void startPrint() {
+			int height = 175 + 3 * 15 + 20;
+			// 通俗理解就是书、文档
+			Book book = new Book();
+			// 打印格式
+			PageFormat pf = new PageFormat();
+			pf.setOrientation(PageFormat.PORTRAIT);
+			// 通过Paper设置页面的空白边距和可打印区域。必须与实际打印纸张大小相符。
+			Paper p = new Paper();
+			p.setSize(230, height);
+			p.setImageableArea(5, -20, 230, height + 20);
+			pf.setPaper(p);
+			// 把 PageFormat 和 Printable 添加到书中，组成一个页面
+			book.append(this, pf);
+			// 获取打印服务对象
+			PrinterJob job = PrinterJob.getPrinterJob();
+			job.setPageable(book);
+			try {
+				job.print();
+			} catch (PrinterException e1) {
+				System.out.println("================打印出现异常");
+			}
+		}
+
+	}
+
 }

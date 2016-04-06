@@ -58,7 +58,7 @@ public class storeFrame extends JFrame {
 		setTitle("\u67E5\u8BE2");
 		storeHouseImpl = new StoreHouseImpl();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 798, 626);
+		setBounds(100, 100, 1024, 768);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -66,7 +66,7 @@ public class storeFrame extends JFrame {
 
 		JScrollPane jScrollPane_data = new JScrollPane();
 		jScrollPane_data.setPreferredSize(new Dimension(737, 251));
-		jScrollPane_data.setBounds(192, 39, 567, 445);
+		jScrollPane_data.setBounds(192, 39, 754, 608);
 		contentPane.add(jScrollPane_data);
 		jScrollPane_data.setPreferredSize(new java.awt.Dimension(737, 251));
 		{
